@@ -147,3 +147,108 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.05);
 }
+
+/* ============================================
+   WIDGET TUGAS (POJOK KIRI BAWAH)
+   ============================================ */
+
+/* Container Widget Tugas */
+.tugas-widget-container {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 320px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000; /* Agar tampil di atas elemen lain */
+}
+
+/* Header Widget Tugas */
+.tugas-header {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="dark"] .tugas-header {
+  color: #fff;
+}
+
+/* Counter Badge (Angka jumlah tugas) */
+.tugas-badge {
+  font-size: 0.75rem;
+  background: var(--navy);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Item Tugas - Mengadaptasi gaya schedule-item */
+.tugas-item {
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.tugas-item:hover {
+  transform: translateX(4px);
+  border-color: rgba(245, 158, 11, 0.3); /* Nuansa oranye saat di-hover */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .tugas-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Indikator Garis Warna di Kiri (Kuning/Oranye untuk tugas) */
+.tugas-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #F59E0B; /* Warna amber/oranye */
+  opacity: 0.8;
+}
+
+/* Indikator Merah untuk Tugas Mendesak (Urgent) */
+.tugas-item.urgent::before {
+  background: var(--maroon, #EF4444);
+}
+
+/* Teks dan Detail Tugas */
+.tugas-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-main, #111827);
+  line-height: 1.3;
+}
+
+.tugas-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="dark"] .tugas-title {
+  color: #fff;
+}
