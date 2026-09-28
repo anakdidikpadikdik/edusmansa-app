@@ -1,0 +1,149 @@
+/* ============================================
+   MODERN WIDGET UI OVERHAUL (SCHEDULE & ANNOUNCEMENTS)
+   ============================================ */
+
+/* Widget Card Overrides */
+.widget-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-top: none;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Modern Gradient Glow Top Edge */
+.widget-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--navy) 0%, var(--progress-bar) 50%, var(--navy) 100%);
+  opacity: 0.9;
+}
+
+/* Smooth Segmented Controls for Day Tabs */
+.day-tabs {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 2px;
+}
+
+.day-tab {
+  border-radius: 8px;
+  color: var(--text-muted);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.day-tab.active {
+  background: var(--bg-card);
+  color: var(--navy);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transform: scale(1.02);
+}
+
+[data-theme="dark"] .day-tab.active {
+  color: #fff;
+  background: var(--navy);
+}
+
+/* Modern Schedule Items */
+.schedule-item {
+  border-left: none;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.schedule-item:hover {
+  transform: translateX(4px);
+  border-color: rgba(27, 58, 107, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .schedule-item:hover {
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Colored Edge Pill Indicator */
+.schedule-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--navy);
+  opacity: 0.8;
+}
+
+.schedule-item.break::before {
+  background: var(--maroon);
+}
+.schedule-item.break {
+  background: var(--bg-subtle);
+  border-style: dashed;
+  opacity: 1; /* Reset old opacity */
+}
+.schedule-item.break .subject-name {
+  color: var(--maroon);
+}
+
+/* Live Active Schedule Item */
+.schedule-item.active {
+  border: 1px solid #34D399 !important;
+  background: #ECFDF5 !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+.schedule-item.active::before {
+  background: #10B981;
+}
+
+[data-theme="dark"] .schedule-item.active {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Dropdowns & Inputs */
+.class-dropdown, .mode-dropdown, .search-mini {
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.class-dropdown:focus, .mode-dropdown:focus, .search-mini:focus {
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(27, 58, 107, 0.1);
+  border-color: var(--navy);
+}
+
+/* Announcements & Teachers overrides */
+.ann-card, .teacher-card-item {
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 14px;
+  margin-bottom: 10px;
+  transition: all 0.25s ease;
+}
+.ann-card:hover, .teacher-card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}

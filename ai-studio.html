@@ -1,0 +1,777 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Schedule Studio - EduSmansa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0F2548;
+      --navy-light: #1A365D;
+      --gold: #F59E0B;
+      --bg-page: #F1F5F9;
+      --bg-card: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --terminal-bg: #0F172A;
+      --terminal-text: #10B981;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* === SIDEBAR === */
+    .sidebar {
+      width: 360px;
+      min-width: 360px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.03);
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .studio-header {
+      padding: 20px 24px 0 24px;
+      flex-shrink: 0;
+    }
+    .studio-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .studio-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+
+    /* === TAB NAVIGATION === */
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg-card);
+    }
+    .sidebar-tab-btn {
+      flex: 1;
+      padding: 10px 4px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .sidebar-tab-btn:hover {
+      color: var(--navy);
+      background: var(--bg-page);
+    }
+    .sidebar-tab-btn.active {
+      color: var(--navy);
+      border-bottom-color: var(--gold);
+      background: var(--bg-page);
+    }
+
+    /* === TAB PANELS === */
+    .sidebar-panels {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .tab-panel {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      flex-direction: column;
+    }
+    .tab-panel.active {
+      display: flex;
+    }
+
+    /* === PANEL 3: KONFIGURASI (original content) === */
+    .config-group {
+      margin-bottom: 20px;
+    }
+    .config-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy-light);
+      margin-bottom: 8px;
+    }
+    .config-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-page);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      outline: none;
+    }
+    .config-select:focus {
+      border-color: var(--navy);
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .checkbox-item input {
+      margin-top: 3px;
+    }
+
+    .btn-generate {
+      margin-top: auto;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(15, 37, 72, 0.2);
+      flex-shrink: 0;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 37, 72, 0.3);
+    }
+
+    /* === PANEL 1 & 2: DATA FORMS === */
+    .panel-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy-light);
+      margin-bottom: 10px;
+    }
+    .form-grade-select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-page);
+      font-family: inherit;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      outline: none;
+      margin-bottom: 14px;
+    }
+    .form-grade-select:focus { border-color: var(--navy); }
+
+    .info-text {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* Subject table */
+    .subject-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-bottom: 14px;
+    }
+    .subject-table th {
+      background: var(--navy);
+      color: white;
+      padding: 7px 6px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    .subject-table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .subject-table tr:hover td { background: #f8fafc; }
+    .subject-table input[type=number] {
+      width: 52px;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 0.8rem;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+    .subject-table input[type=number]:focus { border-color: var(--navy); }
+    .teacher-code-badge {
+      display: inline-block;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* Teacher list */
+    .teacher-card {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .teacher-card-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 2px;
+    }
+    .teacher-card-code {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .teacher-field-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--navy-light);
+      margin-bottom: 5px;
+      display: block;
+    }
+    .days-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .day-check-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .day-check-label input[type=checkbox] {
+      accent-color: #EF4444;
+      width: 14px;
+      height: 14px;
+    }
+    .max-jp-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .max-jp-row input[type=number] {
+      width: 60px;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+    .max-jp-row input[type=number]:focus { border-color: var(--navy); }
+    .max-jp-row span { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Save button */
+    .btn-save {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .btn-save:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .save-toast {
+      display: none;
+      font-size: 0.78rem;
+      color: #059669;
+      text-align: center;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    /* === MAIN AREA (TERMINAL & HASIL) === */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-page);
+      overflow-y: auto;
+    }
+
+    .top-bar {
+      height: 60px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      justify-content: space-between;
+    }
+    .btn-back {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover {
+      color: var(--navy);
+    }
+
+    .content-wrapper {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* TERMINAL MOCKUP */
+    .terminal-container {
+      background: var(--terminal-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .terminal-header {
+      background: #1E293B;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-r { background: #EF4444; }
+    .dot-y { background: #F59E0B; }
+    .dot-g { background: #10B981; }
+    .terminal-title {
+      color: #94A3B8;
+      font-size: 0.75rem;
+      font-family: monospace;
+      margin-left: 8px;
+    }
+
+    .terminal-body {
+      padding: 16px;
+      height: 180px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--terminal-text);
+      line-height: 1.6;
+    }
+    .log-line { margin-bottom: 4px; }
+    .log-sys { color: #38BDF8; }
+    .log-err { color: #F87171; }
+    .log-warn { color: #FBBF24; }
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--terminal-text);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* RESULT AREA */
+    .result-section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .result-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .btn-export {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--navy);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.5; /* disabled state mock */
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      color: #CBD5E1;
+      margin-bottom: 12px;
+    }
+
+  
+    /* ======================================
+       MOBILE RESPONSIVE - AI STUDIO
+       ====================================== */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+      }
+
+      .sidebar {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-height: 70vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        flex-shrink: 0;
+      }
+
+      .studio-header {
+        padding: 12px 16px !important;
+      }
+
+      .studio-title {
+        font-size: 1.2rem !important;
+      }
+
+      .sidebar-tab-btn {
+        font-size: 0.72rem !important;
+        padding: 10px 2px !important;
+      }
+
+      .sidebar-panels {
+        overflow-y: auto;
+        max-height: 55vh;
+      }
+
+      .tab-panel {
+        padding: 12px !important;
+      }
+
+      /* Hide back button text on mobile, keep it compact */
+      .main-area {
+        flex: none;
+        width: 100%;
+        overflow-y: auto;
+        min-height: 100vh;
+      }
+
+      .top-bar {
+        padding: 10px 14px !important;
+        font-size: 0.85rem !important;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .content-wrapper {
+        padding: 12px !important;
+        gap: 14px !important;
+      }
+
+      .terminal-body {
+        height: 150px !important;
+        font-size: 0.75rem !important;
+      }
+
+      .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .result-title {
+        font-size: 1rem;
+      }
+
+      /* Export buttons wrap */
+      .result-header > div:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .btn-export {
+        font-size: 0.75rem !important;
+        padding: 6px 10px !important;
+      }
+
+      #teacher-search {
+        width: 100% !important;
+        font-size: 0.85rem !important;
+      }
+
+      /* Tombol generate */
+      .btn-generate {
+        padding: 14px !important;
+        font-size: 0.95rem !important;
+      }
+
+      .max-jp-row {
+        flex-wrap: wrap;
+      }
+
+      /* Schedule grid on mobile */
+      .schedule-grid {
+        font-size: 0.65rem !important;
+      }
+
+      .schedule-grid span {
+        padding: 3px 2px !important;
+        min-height: 50px !important;
+        font-size: 0.6rem !important;
+      }
+    }
+
+    @media print { .sidebar, .top-bar, .terminal-container, .btn-export, #teacher-search { display: none !important; } .main-area { padding: 0 !important; margin: 0 !important; width: 100% !important; background: white !important; } .content-wrapper { max-width: 100% !important; padding: 0 !important; } .result-section { box-shadow: none !important; border: none !important; padding: 0 !important; } body { background: white !important; } .schedule-grid > div { page-break-inside: avoid; border: 1px solid #000 !important; } .schedule-grid span { border: 1px solid #000 !important; color: #000 !important; background: transparent !important; } }</style>
+</head>
+<body>
+
+  <!-- KIRI: PANEL KONFIGURASI -->
+  <aside class="sidebar">
+    <div class="studio-header">
+      <h1 class="studio-title">&#10024; AI Studio</h1>
+      <p class="studio-subtitle">Generator Jadwal Otomatis</p>
+    </div>
+
+    <!-- TAB BUTTONS -->
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab-btn" id="tab-btn-1" onclick="switchTab(1)">&#128218; Mapel &amp; Kelas</button>
+      <button class="sidebar-tab-btn" id="tab-btn-2" onclick="switchTab(2)">&#128101; Guru</button>
+      <button class="sidebar-tab-btn active" id="tab-btn-3" onclick="switchTab(3)">&#9881;&#65039; Konfigurasi</button>
+    </div>
+
+    <!-- TAB PANELS -->
+    <div class="sidebar-panels">
+
+      <!-- ===== TAB 1: DATA MAPEL & KELAS ===== -->
+      <div class="tab-panel" id="tab-panel-1">
+        <p class="info-text">&#128161; Atur takaran JP per mapel. Kelas X berlaku seragam. Kelas XI &amp; XII pilih per kelas.</p>
+        <label class="panel-section-title">Pilih Kelas</label>
+        <select class="form-grade-select" id="curr-class-select" onchange="loadCurriculumTab()">
+          <option value="X">Kelas X (Semua Sama)</option>
+          <optgroup label="â”€â”€ Kelas XI â”€â”€">
+            <option value="XI-1">Kelas XI-1</option><option value="XI-2">Kelas XI-2</option>
+            <option value="XI-3">Kelas XI-3</option><option value="XI-4">Kelas XI-4</option>
+            <option value="XI-5">Kelas XI-5</option><option value="XI-6">Kelas XI-6</option>
+            <option value="XI-7">Kelas XI-7</option><option value="XI-8">Kelas XI-8</option>
+            <option value="XI-9">Kelas XI-9</option><option value="XI-10">Kelas XI-10</option>
+            <option value="XI-11">Kelas XI-11</option><option value="XI-12">Kelas XI-12</option>
+          </optgroup>
+          <optgroup label="â”€â”€ Kelas XII â”€â”€">
+            <option value="XII-1">Kelas XII-1</option><option value="XII-2">Kelas XII-2</option>
+            <option value="XII-3">Kelas XII-3</option><option value="XII-4">Kelas XII-4</option>
+            <option value="XII-5">Kelas XII-5</option><option value="XII-6">Kelas XII-6</option>
+            <option value="XII-7">Kelas XII-7</option><option value="XII-8">Kelas XII-8</option>
+            <option value="XII-9">Kelas XII-9</option><option value="XII-10">Kelas XII-10</option>
+            <option value="XII-11">Kelas XII-11</option><option value="XII-12">Kelas XII-12</option>
+          </optgroup>
+        </select>
+        <div id="curriculum-table-container">
+          <p style="color: var(--text-muted); font-size:0.83rem;">Memuat data...</p>
+        </div>
+        <button class="btn-save" onclick="saveCurriculum()">&#128190; Simpan Kurikulum</button>
+        <div class="save-toast" id="curriculum-toast">&#10003; Tersimpan!</div>
+      </div>
+
+      <!-- ===== TAB 2: DATA GURU ===== -->
+      <div class="tab-panel" id="tab-panel-2">
+        <p class="info-text">&#128161; Centang hari di mana guru <strong>SIBUK / TIDAK BISA MENGAJAR</strong>.</p>
+        <input type="text" id="teacher-search-sidebar" placeholder="&#128269; Cari nama guru..." oninput="filterTeacherSidebar()" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:7px; font-size:0.82rem; outline:none; margin-bottom:12px; font-family:inherit;">
+        <div id="teacher-prefs-container">
+          <p style="color: var(--text-muted); font-size:0.83rem;">Memuat data guru...</p>
+        </div>
+        <button class="btn-save" onclick="saveTeacherPrefs()">&#128190; Simpan Preferensi Guru</button>
+        <div class="save-toast" id="teacher-toast">&#10003; Tersimpan!</div>
+      </div>
+
+      <!-- ===== TAB 3: KONFIGURASI ===== -->
+      <div class="tab-panel active" id="tab-panel-3">
+
+        <!-- SAKLAR MASTER -->
+        <div class="config-group">
+          <label class="config-label">&#128275; Aktifkan Custom Data</label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-use-curriculum">
+            <span>Gunakan Custom Kurikulum (Tab Mapel &amp; Kelas)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-use-teacher-prefs">
+            <span>Gunakan Request Hari Libur Guru (Tab Guru)</span>
+          </label>
+        </div>
+
+        <div class="config-group">
+          <label class="config-label">Logika Khusus SMANSA (Bisa Dimatikan)</label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-ko-x" checked>
+            <span>Kunci Waktu Kokurikuler Kelas 10</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-jumat-7" checked>
+            <span>Kosongkan Jam ke-7 Hari Jumat</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-gw-rabu" checked>
+            <span>Kunci Guru Wali (Rabu Jam 10)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-ko-xi" checked>
+            <span>Kunci Waktu Kokurikuler Kelas 11 &amp; 12</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="chk-allow3jp">
+            <span>Wajibkan Blok 3 JP Utuh (Lama: ~13 Menit)</span>
+          </label>
+        </div>
+
+        <button class="btn-generate">
+          Mulai Auto-Generate &#128640;
+        </button>
+      </div>
+
+    </div><!-- end sidebar-panels -->
+  </aside>
+
+  <!-- KANAN: AREA UTAMA -->
+  <main class="main-area">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <a href="admin.html" class="btn-back">
+        <span>&larr;</span> Kembali ke Admin Panel
+      </a>
+      <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">
+        Status: Menunggu Instruksi
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <!-- Terminal Window -->
+      <section class="terminal-container">
+        <div class="terminal-header">
+          <div class="terminal-dot dot-r"></div>
+          <div class="terminal-dot dot-y"></div>
+          <div class="terminal-dot dot-g"></div>
+          <div class="terminal-title">ai-engine.exe &ndash; Runtime Log</div>
+        </div>
+        <div class="terminal-body" id="terminal-log">
+          <div class="log-line log-sys">[SYS] AI Schedule Engine v1.0 initialized.</div>
+          <div class="log-line">[INFO] Memuat data guru dan mata pelajaran...</div>
+          <div class="log-line">[INFO] Menunggu konfigurasi aturan dari Admin.</div>
+          <div class="log-line">> <span class="cursor-blink"></span></div>
+        </div>
+      </div></section>
+
+      <!-- Result Area -->
+      <section class="result-section">
+        <div class="result-header">
+          <h2 class="result-title">Hasil Jadwal</h2>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;"><input type="text" id="teacher-search" placeholder="Cari Guru (misal: Eko02)..." onkeyup="filterTeacher()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.85rem; outline: none;"><button class="btn-export" style="background: #EF4444; color: white; border: none;" onclick="downloadPDF()">Cetak PDF</button><button class="btn-export" style="background: #10B981; color: white; border: none;" onclick="exportToExcel()">Ekspor Excel</button><button class="btn-export" id="btn-export-json" style="background: white; border: 1px solid var(--border); color: var(--text-main);" onclick="exportToJSONFile()">&#128190; Ekspor ke JSON</button></div>
+        </div>
+        
+        <div id="result-content"><div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <h3>Belum ada data</h3>
+          <p style="font-size: 0.85rem; margin-top: 6px;">Klik tombol "Mulai Auto-Generate" di samping kiri untuk meracik jadwal.</p>
+        </div>
+      </div></section>
+
+    </div>
+  </main>
+
+  
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="ai-studio.js?v=40006"></script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduSmansa — Asisten Digital & Informasi Sekolah</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0F2548" id="meta-theme-color">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('edusmansa_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      if (savedTheme === 'dark') {
+        document.getElementById('meta-theme-color')?.setAttribute('content', '#070E20');
+      }
+    })();
+  </script>
+  <link rel="apple-touch-icon" href="icon-192x192.png?v=2">
+  <link rel="stylesheet" href="style.css?v=91">
+  <!-- Font & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="top-progress-bar"></div>
+  <!-- Header App Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="logo-badge">
+          <img src="logo_smansa_clean.png" alt="Logo SMAN 1 Sumedang" class="header-logo-img">
+        </div>
+        <div>
+          <h1 class="app-title">EduSmansa <span class="badge-ai">AI</span></h1>
+          <p class="app-subtitle" id="school-name-text">SMAN 1 Sumedang</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="btn-theme-toggle" onclick="toggleTheme()" style="background:transparent; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:4px;" title="Ganti Tema">
+          <span id="theme-icon">🌓</span>
+        </button>
+        <button id="btn-install-pwa" style="display:none; align-items:center; gap:6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; color: #fff; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; cursor: pointer; font-family: inherit; white-space: nowrap;" onclick="installPWA()">
+          📲 Install App
+        </button>
+        <div class="status-indicator" id="school-status">
+          <span class="dot-pulse"></span>
+          <span id="status-text">Memuat Status...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <script>
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('edusmansa_theme', newTheme);
+      
+      const metaThemeColor = document.getElementById('meta-theme-color');
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', newTheme === 'dark' ? '#070E20' : '#0F2548');
+      }
+    }
+  </script>
+
+  <!-- Main Grid Content -->
+  <main class="main-layout">
+    
+    <!-- Left Column: AI Chat Assistant -->
+    <section class="chat-section" id="chat-section">
+      <div class="chat-card">
+        <div class="chat-header">
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+            <img src="bot-avatar.jpg" alt="EduSmansa AI" class="bot-avatar">
+            <div>
+              <h2 class="chat-header-title">Asisten Digital Sekolah</h2>
+              <p class="chat-header-status">Online • Menjawab Pertanyaan Spesifik Sekolah</p>
+            </div>
+          </div>
+          <button class="btn-clear-chat" onclick="clearChat()" title="Bersihkan Obrolan" style="background: rgba(255,255,255,0.08); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; transition: background 0.2s ease;">🧹</button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div class="chat-messages" id="chat-messages">
+          <div class="message bot-message">
+            <div class="message-content bot-card-modern">
+              Halo! Saya adalah asisten digital resmi sekolah.
+              <br><br>
+              Kamu bisa bertanya seputar <strong>Jadwal Pelajaran</strong>, <strong>Pimpinan & Guru</strong>, atau <strong>Tata Tertib Sekolah</strong> secara langsung.
+            </div>
+          </div>
+          
+          <!-- Quick Chips Bento Grid (Empty State) -->
+          <div class="chips-bento-wrapper" id="quick-chips-wrapper">
+            <p class="bento-title" style="display:flex; justify-content:space-between; align-items:center;">
+              Coba tanyakan:
+              <button type="button" onclick="renderQuickChips()" style="background:none; border:none; color:var(--navy); font-size:0.7rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px; padding:4px;">
+                🔀 Acak
+              </button>
+            </p>
+            <div class="chips-bento-container" id="quick-chips">
+              <!-- Dynamic shuffled chips loaded by app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Chat Input Dock -->
+        <div class="chat-bottom-dock">
+          <form class="chat-input-form modern-dock" id="chat-form" onsubmit="handleChatSubmit(event)">
+            <input 
+              type="text" 
+              id="chat-input" 
+              class="chat-input modern-input" 
+              placeholder="Ketik pertanyaan di sini..." 
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="btn-send modern-send" id="btn-send-main" title="Kirim Pertanyaan">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M2.01 21L23 12L2.01 3L2 10l15 2-15 2z"/>
+              </svg>
+            </button>
+          </form>
+          <div class="ai-footer-note">EduSmansa AI dapat membuat kesalahan. Harap periksa kembali informasi penting.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Widgets -->
+    <section class="widgets-section" id="widgets-section">
+      
+      
+        <!-- WIDGET LIVE STATUS -->
+        <div id="live-status-widget" style="display: none; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;">
+          <div style="position: relative; z-index: 2; display: flex; align-items: center; gap: 15px;">
+            <div style="position: relative; width: 50px; height: 50px; flex-shrink: 0;">
+              <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/>
+                <path id="live-progress-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="100, 100" />
+              </svg>
+              <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">
+                ⏳
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div id="live-title" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 4px;">Pelajaran Sedang Berlangsung</div>
+              <div id="live-subject" style="font-size: 1.3rem; font-weight: 800; margin-bottom: 2px;">Memuat...</div>
+              <div id="live-countdown" style="font-size: 0.9rem; color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 6px;">
+                <span style="display:inline-block; width:8px; height:8px; background:#4ade80; border-radius:50%; box-shadow: 0 0 8px #4ade80;"></span> Sisa waktu dihitung...
+              </div>
+            </div>
+          </div>
+          <!-- Deco -->
+          <svg style="position: absolute; right: -20px; bottom: -20px; width: 120px; height: 120px; opacity: 0.1;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+
+        <!-- Widget 1: Interactive Schedule Viewer -->
+      <div class="widget-card" id="schedule-widget">
+        <div class="widget-header">
+          <h3>📅 Jadwal Pelajaran Interaktif</h3>
+          <div class="schedule-controls">
+            <select id="schedule-mode-select" class="mode-dropdown" onchange="changeScheduleMode(this.value)" title="Pilih pola jadwal">
+              <option value="normal">Normal (15:00)</option>
+              <option value="short">Pendek (14:10)</option>
+            </select>
+            <select id="class-select" class="class-dropdown" onchange="changeClassSchedule(this.value)">
+              <!-- Options dynamically filled -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Day Tabs -->
+        <div class="day-tabs" id="day-tabs">
+          <button class="day-tab active" onclick="selectDayTab('Senin')">Senin</button>
+          <button class="day-tab" onclick="selectDayTab('Selasa')">Selasa</button>
+          <button class="day-tab" onclick="selectDayTab('Rabu')">Rabu</button>
+          <button class="day-tab" onclick="selectDayTab('Kamis')">Kamis</button>
+          <button class="day-tab" onclick="selectDayTab('Jumat')">Jumat</button>
+        </div>
+
+        <!-- Schedule Table / List -->
+        <div class="schedule-list" id="schedule-list">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+
+      <!-- Widget 2: Announcements & Event Countdown -->
+      <div class="widget-card" id="announcement-widget">
+        <div class="widget-header">
+          <h3>📢 Pengumuman & Agenda Terbaru</h3>
+        </div>
+        <div class="announcement-list" id="announcement-list">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+
+      <!-- Widget 3: Teacher Directory Finder -->
+      <div class="widget-card" id="directory-widget">
+        <div class="widget-header">
+          <h3>👨‍🏫👩‍🏫 Direktori Guru</h3>
+          <input type="text" id="teacher-search" class="search-mini" placeholder="Ketik nama guru atau mata pelajaran..." oninput="filterTeachers(this.value)">
+        </div>
+        <div class="teacher-list" id="teacher-list">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation (Hidden on Desktop) -->
+  <nav class="mobile-bottom-nav" id="mobile-nav">
+    <button class="nav-item active" onclick="switchMobileTab('chat')">
+      <div class="nav-icon">💬</div>
+      <span class="nav-label">Chat</span>
+    </button>
+    <button class="nav-item" onclick="switchMobileTab('schedule')">
+      <div class="nav-icon">📅</div>
+      <span class="nav-label">Jadwal</span>
+    </button>
+    <button class="nav-item" onclick="switchMobileTab('directory')">
+      <div class="nav-icon">📌</div>
+      <span class="nav-label">Info</span>
+    </button>
+  </nav>
+
+  
+  <!-- MODAL JADWAL TIMELINE GURU (PUBLIC) -->
+  <div id="public-teacher-modal" class="admin-modal-overlay" style="display: none; z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-card); color: var(--text-primary); border-radius: 12px; width: 95%; max-width: 450px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-xl);">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-subtle);">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--navy); display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Jadwal Mengajar
+        </h3>
+        <button onclick="closePublicTeacherModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      
+      <div style="padding: 0; overflow-y: auto; flex: 1; background: var(--bg-page);" id="public-teacher-schedule-container">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- MODAL CATATAN & LINK PRIBADI (LOKAL) -->
+  <div id="private-subject-modal" class="admin-modal-overlay" style="display: none; z-index: 10002; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-card); color: var(--text-primary); border-radius: 12px; width: 95%; max-width: 400px; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-xl);">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-subtle);">
+        <div>
+          <h3 id="psm-subject" style="margin: 0; font-size: 1.1rem; color: var(--navy); font-weight: 800;">Mata Pelajaran</h3>
+          <div id="psm-teacher" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Pengajar</div>
+        </div>
+        <button onclick="closePrivateSubjectModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      
+      <div style="padding: 15px 20px; overflow-y: auto;">
+        <!-- Link Hub -->
+        <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--navy); display: flex; align-items: center; gap:5px;">🔗 Pusat Tautan</h4>
+        <div style="display: flex; gap: 8px; flex-direction: column; margin-bottom: 20px;">
+          <input type="url" id="psm-link-gmeet" placeholder="Link G-Meet / Zoom..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; background: var(--bg-page); color: var(--text-primary);" />
+          <input type="url" id="psm-link-classroom" placeholder="Link Google Classroom..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; background: var(--bg-page); color: var(--text-primary);" />
+          <button onclick="openPrivateLinkHub()" style="background: var(--navy); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px;">
+            Buka Tautan Tersimpan
+          </button>
+        </div>
+
+        <!-- Homework Tracker -->
+        <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--navy); display: flex; align-items: center; gap:5px;">📝 Catatan & PR (Lokal)</h4>
+        <textarea id="psm-notes" rows="4" placeholder="Ketik tugas, PR, atau agenda untuk mapel ini..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; font-family: inherit; resize: vertical; margin-bottom: 10px; background: var(--bg-page); color: var(--text-primary);"></textarea>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div id="psm-alert" style="color: #10B981; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s;">Tersimpan di HP Anda!</div>
+          <button onclick="savePrivateSubjectData()" style="background: #10B981; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div id="admin-modal" class="admin-modal-overlay" style="display: none;">
+    <div class="admin-modal-card">
+      <h3>🔒 Login Resmi Admin</h3>
+      <p style="margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem;">Gunakan akun admin terdaftar di Firebase untuk mengelola data sekolah.</p>
+      <input type="email" id="admin-email-input" class="admin-modal-input" placeholder="Email Admin (contoh: admin@smansa.sch.id)" />
+      <input type="password" id="admin-pwd-input" class="admin-modal-input" placeholder="Kata Sandi..." onkeypress="if(event.key === 'Enter') verifyAdminLogin()" />
+      <div class="admin-modal-actions">
+        <button onclick="closeAdminModal()" class="btn-secondary">Batal</button>
+        <button id="btn-admin-login" onclick="verifyAdminLogin()" class="btn-primary" style="cursor: pointer; padding: 10px 20px;">Masuk</button>
+      </div>
+      <p id="admin-error-msg" style="color: #F43F5E; font-size: 0.8rem; display: none; margin-top: 10px;"></p>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyABdt2MPuGLScGkCwz5G101mAAM2X6RvTw",
+      authDomain: "edusmansa.firebaseapp.com",
+      projectId: "edusmansa",
+      storageBucket: "edusmansa.firebasestorage.app",
+      messagingSenderId: "358803408446",
+      appId: "1:358803408446:web:5483f9d27da8a1d9eef36f"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Enable Offline Persistence
+    db.enablePersistence().catch((err) => {
+      console.warn("Firebase offline persistence error:", err.code);
+    });
+  </script>
+
+  <script src="app.js?v=40006"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.error('Service Worker registration failed', err));
+      });
+    }
+  </script>
+</body>
+</html>

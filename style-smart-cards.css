@@ -1,0 +1,77 @@
+/* ============================================
+   SMART SCHEDULE CARDS & UI CHIPS
+   ============================================ */
+
+.ai-schedule-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ai-schedule-card {
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--navy);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ai-schedule-time {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-schedule-period {
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.ai-schedule-subject {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.ai-schedule-teacher {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.ai-break-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--maroon);
+  padding: 6px 14px;
+  background: rgba(183, 28, 28, 0.05);
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+/* Fallback chips */
+.chip-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip-btn:hover {
+  background: var(--navy);
+  color: #fff;
+  transform: translateY(-1px);
+}
